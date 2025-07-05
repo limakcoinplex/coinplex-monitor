@@ -1,5 +1,4 @@
 import datetime
-import json
 import random
 import matplotlib.pyplot as plt
 
@@ -8,11 +7,11 @@ now = datetime.datetime.now()
 date = now.strftime('%Y-%m-%d')
 time = now.strftime('%H:%M:%S')
 
-# Symulowane ceny (losowe)
-dates = [f"2025-07-0{d}" for d in range(1, 6)]
-prices = [round(random.uniform(0.01, 0.05), 4) for _ in dates]
+# Symulacja cen
+dates = [f"2025-07-{str(i).zfill(2)}" for i in range(1, 6)]
+prices = [round(random.uniform(0.01, 0.05), 4) for _ in range(5)]
 
-# Generowanie wykresu
+# Wykres
 plt.figure(figsize=(6, 3))
 plt.plot(dates, prices, marker='o', color='orange')
 plt.title('Symulowany wykres ceny CPLX')
@@ -21,38 +20,41 @@ plt.ylabel('Cena (USD)')
 plt.grid(True)
 plt.tight_layout()
 plt.savefig("chart.png")
-plt.close()
 
-# Tworzenie pliku HTML z dynamicznymi danymi
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(f"""
+# HTML
+html = f"""
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Coinplex Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPLX Monitor</title>
     <style>
         body {{
-            background-color: #121212;
-            color: #fff;
+            background-color: #111;
+            color: white;
             font-family: Arial, sans-serif;
             padding: 20px;
         }}
         .status {{
-            padding: 10px;
-            background-color: #333;
             border-left: 5px solid orange;
+            padding: 10px;
+            background-color: #222;
             margin-bottom: 20px;
+        }}
+        .status span {{
+            color: red;
+            font-weight: bold;
         }}
     </style>
 </head>
 <body>
-    <h1>📊 Coinplex Monitor</h1>
+    <h1>CPLX</h1>
     <p>Ostatnia aktualizacja: <strong>{date} {time}</strong></p>
 
     <div class="status">
-        <p><strong>STATUS:</strong> Token CPLX nadal bez ceny rynkowej (0 USD).</p>
-        <p><strong>OSTRZEŻENIE:</strong> Brak aktywnych giełd, token w fazie zamkniętej emisji.</p>
+        <p><span>STATUS:</span> Token CPLX nadal bez ceny rynkowej (0 USD).</p>
+        <p><span>OSTRZEŻENIE:</span> Brak aktywnych giełd, token w fazie zamkniętej emisji.</p>
     </div>
 
     <h2>Symulowany wykres CPLX</h2>
@@ -68,8 +70,14 @@ with open("index.html", "w", encoding="utf-8") as f:
         <li>Automatyczne alerty bezpieczeństwa (w przygotowaniu)</li>
         <li>Codzienne sprawdzanie statusu tokena</li>
     </ul>
-
-    <!-- Ukryty komentarz: {random.randint(1,1000000)} -->
 </body>
 </html>
-    """)
+"""
+
+# Zapisz HTML
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html)
+
+# Dodaj ukryty komentarz, by GitHub widział zmianę
+with open("index.html", "a", encoding="utf-8") as f:
+    f.write(f"\n<!-- update: {datetime.datetime.now()} -->")
