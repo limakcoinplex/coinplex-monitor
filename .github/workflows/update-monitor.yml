@@ -9,8 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -20,13 +19,13 @@ jobs:
       - name: Install dependencies
         run: pip install matplotlib
 
-      - name: Run update script
+      - name: Run generator
         run: python generate.py
 
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
-          git config --global user.name "limakcoinplex-bot"
-          git config --global user.email "limaklee@users.noreply.github.com"
-          git add index.html
-          git commit -m "Automatyczna aktualizacja monitora Coinplex"
+          git config --global user.email "bot@github.com"
+          git config --global user.name "GitHub Bot"
+          git add index.html chart.png
+          git commit -m "Auto update index.html + wykres"
           git push
