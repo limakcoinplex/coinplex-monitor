@@ -3,15 +3,27 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import base64
 from io import BytesIO
+import json
+import random
 
-# Przygotowanie danych (symulowane dane CPLX)
+# Wczytanie alertu
+alert_message = ""
+try:
+    with open("alerts.json", "r") as alert_file:
+        alert_data = json.load(alert_file)
+        if alert_data.get("status") == "active":
+            alert_message = alert_data.get("message", "")
+except:
+    alert_message = ""
+
+# Symulacja zmieniającej się ceny CPLX (między 0 a 0.05 USD)
 dates = ["2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04", datetime.now().strftime('%Y-%m-%d')]
-prices = [0.0] * len(dates)
+prices = [round(random.uniform(0.01, 0.03), 4) for _ in dates]
 
 # Generowanie wykresu
 plt.figure(figsize=(8, 4))
 plt.plot(dates, prices, marker='o', color='orange')
-plt.title('Symulowany wykres ceny CPLX')
+plt.title('Wykres ceny CPLX (symulacja)')
 plt.xlabel('Data')
 plt.ylabel('Cena (USD)')
 plt.grid(True)
@@ -25,7 +37,7 @@ img_buffer.seek(0)
 img_base64 = base64.b64encode(img_buffer.read()).decode('utf-8')
 plt.close()
 
-# Generowanie pliku HTML
+# HTML z alertem i wykresem
 html_content = f"""<!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -57,6 +69,14 @@ html_content = f"""<!DOCTYPE html>
             border-left: 6px solid #ffaa00;
             margin: 15px 0;
         }}
+        .alert {{
+            background-color: #660000;
+            color: #fff;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 6px solid red;
+            font-weight: bold;
+        }}
         footer {{
             margin-top: 30px;
             font-size: 0.9em;
@@ -68,10 +88,6 @@ html_content = f"""<!DOCTYPE html>
             height: auto;
             margin-top: 20px;
         }}
-        .tag {{
-            font-weight: bold;
-            color: #ff6666;
-        }}
     </style>
 </head>
 <body>
@@ -79,12 +95,14 @@ html_content = f"""<!DOCTYPE html>
         <h1>Monitor Coinplex – CPLX</h1>
         <p>Ostatnia aktualizacja: <strong>{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</strong></p>
 
+        {f'<div class="alert">{alert_message}</div>' if alert_message else ''}
+
         <div class="status">
-            <p><span class="tag">STATUS:</span> Token CPLX nadal bez ceny rynkowej (0 USD).</p>
-            <p><span class="tag">OSTRZEŻENIE:</span> Brak aktywnych giełd, token w fazie zamkniętej emisji.</p>
+            <p><strong>STATUS:</strong> Token CPLX nadal nie ma oficjalnej ceny rynkowej.</p>
+            <p><strong>UWAGA:</strong> Poniższy wykres oparty jest na danych symulowanych.</p>
         </div>
 
-        <h3>Symulowany wykres CPLX</h3>
+        <h3>Wykres CPLX</h3>
         <img src="data:image/png;base64,{img_base64}" alt="Wykres ceny CPLX">
 
         <h3>Twoja inwestycja</h3>
@@ -93,14 +111,13 @@ html_content = f"""<!DOCTYPE html>
 
         <h3>Monitoring</h3>
         <ul>
-            <li>Cena CPLX (obecnie 0 USD)</li>
-            <li>Automatyczne alerty bezpieczeństwa (w przygotowaniu)</li>
-            <li>Codzienne sprawdzanie statusu tokena</li>
+            <li>Symulacja ceny CPLX (losowa, do czasu uruchomienia tokena)</li>
+            <li>Alerty bezpieczeństwa z pliku alerts.json</li>
+            <li>Automatyczna aktualizacja co godzinę</li>
         </ul>
 
         <footer>
-            Stworzone przez <strong>Limaklee</strong> | Tryb ciemny | ChatGPT 2025<br>
-            Wersja z wykresem i automatyzacją (beta)
+            Stworzone przez <strong>Limaklee</strong> | Wersja LIVE symulowana
         </footer>
     </div>
 </body>
