@@ -31,6 +31,7 @@ html = f"""
     <title>CPLX Monitor</title>
     <style>
         body {{
+        <p>Ostatnia aktualizacja: {date} {time}</p>
             background-color: #111;
             color: white;
             font-family: Arial, sans-serif;
